@@ -28,15 +28,6 @@ class Ui_Form(object):
         self.pushButton.setStyleSheet("#pushButton{\n"
 "    text-align: right; \n"
 "padding-right: 40px;\n"
-"}\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"#pushButton:focus{\n"
-"    border:1px solid white;\n"
-"    background-color: white;\n"
-"\n"
 "}")
         self.pushButton.setObjectName("pushButton")
         self.buttonGroup = QtWidgets.QButtonGroup(Form)
@@ -47,7 +38,12 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(15)
         self.pushButton_4.setFont(font)
-        self.pushButton_4.setStyleSheet("\n"
+        self.pushButton_4.setStyleSheet("QPushButton{\n"
+"    text-align: right; \n"
+"padding-right: 40px;\n"
+"}\n"
+"\n"
+"\n"
 "#pushButton_4:focus{\n"
 "    border:1px solid white;\n"
 "    background-color: white;\n"
@@ -59,7 +55,12 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(15)
         self.pushButton_5.setFont(font)
-        self.pushButton_5.setStyleSheet("\n"
+        self.pushButton_5.setStyleSheet("QPushButton{\n"
+"    text-align: right; \n"
+"padding-right: 40px;\n"
+"}\n"
+"\n"
+"\n"
 "#pushButton_5:focus{\n"
 "    border:1px solid white;\n"
 "    background-color: white;\n"
@@ -67,15 +68,16 @@ class Ui_Form(object):
         self.pushButton_5.setObjectName("pushButton_5")
         self.buttonGroup.addButton(self.pushButton_5)
         self.label = QtWidgets.QLabel(self.frame)
-        self.label.setGeometry(QtCore.QRect(90, 50, 41, 31))
+        self.label.setGeometry(QtCore.QRect(60, 30, 100, 100))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.label.setFont(font)
         self.label.setText("")
-        self.label.setScaledContents(False)
+        self.label.setPixmap(QtGui.QPixmap("../src/image/BRAIN SIMULATION.png"))
+        self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.frame)
-        self.label_2.setGeometry(QtCore.QRect(50, 120, 131, 16))
+        self.label_2.setGeometry(QtCore.QRect(50, 146, 131, 20))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_2.setFont(font)
@@ -110,6 +112,43 @@ class Ui_Form(object):
         self.label_20.setPixmap(QtGui.QPixmap("../src/icon/collect.png"))
         self.label_20.setScaledContents(True)
         self.label_20.setObjectName("label_20")
+        self.label_21 = QtWidgets.QLabel(self.frame)
+        self.label_21.setGeometry(QtCore.QRect(20, 398, 54, 50))
+        self.label_21.setText("")
+        self.label_21.setPixmap(QtGui.QPixmap("../src/icon/analysis.png"))
+        self.label_21.setScaledContents(True)
+        self.label_21.setObjectName("label_21")
+        self.label_22 = QtWidgets.QLabel(self.frame)
+        self.label_22.setGeometry(QtCore.QRect(18, 542, 61, 61))
+        font = QtGui.QFont()
+        font.setFamily("Microsoft Yi Baiti")
+        self.label_22.setFont(font)
+        self.label_22.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.label_22.setText("")
+        self.label_22.setPixmap(QtGui.QPixmap("../src/icon/watching.png"))
+        self.label_22.setScaledContents(True)
+        self.label_22.setObjectName("label_22")
+        self.label_24 = QtWidgets.QLabel(self.frame)
+        self.label_24.setGeometry(QtCore.QRect(60, 675, 100, 100))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.label_24.setFont(font)
+        self.label_24.setText("")
+        self.label_24.setPixmap(QtGui.QPixmap("../src/image/whut.png"))
+        self.label_24.setScaledContents(True)
+        self.label_24.setObjectName("label_24")
+        self.label_25 = QtWidgets.QLabel(self.frame)
+        self.label_25.setGeometry(QtCore.QRect(50, 780, 131, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_25.setFont(font)
+        self.label_25.setObjectName("label_25")
+        self.label_26 = QtWidgets.QLabel(self.frame)
+        self.label_26.setGeometry(QtCore.QRect(30, 803, 181, 25))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_26.setFont(font)
+        self.label_26.setObjectName("label_26")
         self.stackedWidget = QtWidgets.QStackedWidget(Form)
         self.stackedWidget.setGeometry(QtCore.QRect(220, 0, 1051, 851))
         font = QtGui.QFont()
@@ -126,11 +165,20 @@ class Ui_Form(object):
         self.page = QtWidgets.QWidget()
         self.page.setObjectName("page")
         self.pushButton_2 = QtWidgets.QPushButton(self.page)
-        self.pushButton_2.setGeometry(QtCore.QRect(870, 430, 75, 24))
+        self.pushButton_2.setGeometry(QtCore.QRect(950, 430, 31, 25))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(False)
         self.pushButton_2.setFont(font)
+        self.pushButton_2.setStyleSheet("QPushButton {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}")
+        self.pushButton_2.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("../src/icon/select.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon)
+        self.pushButton_2.setIconSize(QtCore.QSize(25, 25))
         self.pushButton_2.setObjectName("pushButton_2")
         self.widget = QVideoWidget(self.page)
         self.widget.setEnabled(True)
@@ -150,7 +198,7 @@ class Ui_Form(object):
         self.label_10.setFont(font)
         self.label_10.setObjectName("label_10")
         self.horizontalSlider_2 = QtWidgets.QSlider(self.page)
-        self.horizontalSlider_2.setGeometry(QtCore.QRect(740, 433, 111, 18))
+        self.horizontalSlider_2.setGeometry(QtCore.QRect(830, 433, 111, 18))
         self.horizontalSlider_2.setStyleSheet("QSlider {\n"
 "    padding-left: 0;  /* 左侧端点离左边的距离 */\n"
 "    padding-right: 0;\n"
@@ -185,9 +233,9 @@ class Ui_Form(object):
         self.horizontalSlider_2.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider_2.setObjectName("horizontalSlider_2")
         self.label_9 = QtWidgets.QLabel(self.page)
-        self.label_9.setGeometry(QtCore.QRect(700, 427, 30, 30))
+        self.label_9.setGeometry(QtCore.QRect(790, 427, 30, 30))
         self.label_9.setText("")
-        self.label_9.setPixmap(QtGui.QPixmap("../src/icon/volume.png"))
+        self.label_9.setPixmap(QtGui.QPixmap("../src/icon/volume-on.png"))
         self.label_9.setScaledContents(True)
         self.label_9.setObjectName("label_9")
         self.horizontalSlider = QtWidgets.QSlider(self.page)
@@ -231,9 +279,9 @@ class Ui_Form(object):
 "    background-color: transparent;\n"
 "}")
         self.pushButton_3.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../src/icon/pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_3.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap("../src/icon/pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_3.setIcon(icon1)
         self.pushButton_3.setIconSize(QtCore.QSize(30, 30))
         self.pushButton_3.setObjectName("pushButton_3")
         self.label_11 = QtWidgets.QLabel(self.page)
@@ -255,16 +303,21 @@ class Ui_Form(object):
         self.label_12.setFont(font)
         self.label_12.setObjectName("label_12")
         self.pushButton_9 = QtWidgets.QPushButton(self.page)
-        self.pushButton_9.setGeometry(QtCore.QRect(950, 430, 75, 24))
+        self.pushButton_9.setGeometry(QtCore.QRect(990, 432, 31, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(False)
         self.pushButton_9.setFont(font)
+        self.pushButton_9.setStyleSheet("QPushButton {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}")
+        self.pushButton_9.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("../src/icon/full.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_9.setIcon(icon2)
+        self.pushButton_9.setIconSize(QtCore.QSize(20, 20))
         self.pushButton_9.setObjectName("pushButton_9")
-        self.frame_31 = QtWidgets.QFrame(self.page)
-        self.frame_31.setGeometry(QtCore.QRect(380, 470, 651, 331))
-        self.frame_31.setFrameShape(QtWidgets.QFrame.Box)
-        self.frame_31.setObjectName("frame_31")
         self.frame_4 = QtWidgets.QFrame(self.page)
         self.frame_4.setGeometry(QtCore.QRect(20, 470, 341, 331))
         self.frame_4.setStyleSheet("QFrame{\n"
@@ -280,19 +333,19 @@ class Ui_Form(object):
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_4.setObjectName("frame_4")
         self.lineEdit = QtWidgets.QLineEdit(self.frame_4)
-        self.lineEdit.setGeometry(QtCore.QRect(150, 40, 121, 20))
+        self.lineEdit.setGeometry(QtCore.QRect(150, 42, 121, 20))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.lineEdit.setFont(font)
         self.lineEdit.setObjectName("lineEdit")
         self.radioButton = QtWidgets.QRadioButton(self.frame_4)
-        self.radioButton.setGeometry(QtCore.QRect(150, 110, 41, 20))
+        self.radioButton.setGeometry(QtCore.QRect(150, 115, 41, 20))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.radioButton.setFont(font)
         self.radioButton.setObjectName("radioButton")
         self.radioButton_2 = QtWidgets.QRadioButton(self.frame_4)
-        self.radioButton_2.setGeometry(QtCore.QRect(230, 110, 41, 20))
+        self.radioButton_2.setGeometry(QtCore.QRect(230, 115, 41, 20))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.radioButton_2.setFont(font)
@@ -305,7 +358,7 @@ class Ui_Form(object):
         self.spinBox.setSuffix("")
         self.spinBox.setObjectName("spinBox")
         self.checkBox = QtWidgets.QCheckBox(self.frame_4)
-        self.checkBox.setGeometry(QtCore.QRect(150, 180, 61, 20))
+        self.checkBox.setGeometry(QtCore.QRect(150, 186, 61, 20))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.checkBox.setFont(font)
@@ -313,18 +366,18 @@ class Ui_Form(object):
         self.pushButton_11 = QtWidgets.QPushButton(self.frame_4)
         self.pushButton_11.setGeometry(QtCore.QRect(150, 253, 31, 21))
         self.pushButton_11.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("../src/icon/file.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_11.setIcon(icon1)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap("../src/icon/file.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_11.setIcon(icon3)
         self.pushButton_11.setObjectName("pushButton_11")
         self.checkBox_2 = QtWidgets.QCheckBox(self.frame_4)
-        self.checkBox_2.setGeometry(QtCore.QRect(220, 180, 71, 20))
+        self.checkBox_2.setGeometry(QtCore.QRect(220, 186, 71, 20))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.checkBox_2.setFont(font)
         self.checkBox_2.setObjectName("checkBox_2")
         self.lineEdit_3 = QtWidgets.QLineEdit(self.frame_4)
-        self.lineEdit_3.setGeometry(QtCore.QRect(190, 253, 131, 20))
+        self.lineEdit_3.setGeometry(QtCore.QRect(190, 255, 131, 20))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.lineEdit_3.setFont(font)
@@ -334,6 +387,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.pushButton_6.setFont(font)
+        self.pushButton_6.setIconSize(QtCore.QSize(20, 20))
         self.pushButton_6.setObjectName("pushButton_6")
         self.pushButton_7 = QtWidgets.QPushButton(self.frame_4)
         self.pushButton_7.setGeometry(QtCore.QRect(170, 290, 61, 24))
@@ -349,6 +403,9 @@ class Ui_Form(object):
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.label_3 = QtWidgets.QLabel(self.frame_4)
         self.label_3.setGeometry(QtCore.QRect(10, 10, 25, 25))
+        self.label_3.setStyleSheet("QLabel {\n"
+"    border: none;\n"
+"}")
         self.label_3.setText("")
         self.label_3.setPixmap(QtGui.QPixmap("../src/icon/setting.png"))
         self.label_3.setScaledContents(True)
@@ -359,13 +416,13 @@ class Ui_Form(object):
         font.setPointSize(10)
         self.dateTimeEdit.setFont(font)
         self.dateTimeEdit.setObjectName("dateTimeEdit")
-        self.widget1 = QtWidgets.QWidget(self.frame_4)
-        self.widget1.setGeometry(QtCore.QRect(10, 40, 91, 241))
-        self.widget1.setObjectName("widget1")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.widget1)
+        self.layoutWidget = QtWidgets.QWidget(self.frame_4)
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 40, 91, 241))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.label_13 = QtWidgets.QLabel(self.widget1)
+        self.label_13 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("宋体")
         font.setPointSize(10)
@@ -373,9 +430,10 @@ class Ui_Form(object):
         self.label_13.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_13.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_13.setObjectName("label_13")
         self.verticalLayout.addWidget(self.label_13)
-        self.label_14 = QtWidgets.QLabel(self.widget1)
+        self.label_14 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("宋体")
         font.setPointSize(10)
@@ -383,56 +441,101 @@ class Ui_Form(object):
         self.label_14.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_14.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_14.setObjectName("label_14")
         self.verticalLayout.addWidget(self.label_14)
-        self.label_15 = QtWidgets.QLabel(self.widget1)
+        self.label_15 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_15.setFont(font)
         self.label_15.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_15.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_15.setObjectName("label_15")
         self.verticalLayout.addWidget(self.label_15)
-        self.label_16 = QtWidgets.QLabel(self.widget1)
+        self.label_16 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_16.setFont(font)
         self.label_16.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_16.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_16.setObjectName("label_16")
         self.verticalLayout.addWidget(self.label_16)
-        self.label_18 = QtWidgets.QLabel(self.widget1)
+        self.label_18 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_18.setFont(font)
         self.label_18.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_18.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_18.setObjectName("label_18")
         self.verticalLayout.addWidget(self.label_18)
-        self.label_19 = QtWidgets.QLabel(self.widget1)
+        self.label_19 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_19.setFont(font)
         self.label_19.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_19.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_19.setObjectName("label_19")
         self.verticalLayout.addWidget(self.label_19)
-        self.label_17 = QtWidgets.QLabel(self.widget1)
+        self.label_17 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_17.setFont(font)
         self.label_17.setStyleSheet("QLabel {\n"
 "    border-style: none;\n"
 "}")
+        self.label_17.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_17.setObjectName("label_17")
         self.verticalLayout.addWidget(self.label_17)
+        self.label_27 = QtWidgets.QLabel(self.frame_4)
+        self.label_27.setGeometry(QtCore.QRect(38, 12, 131, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_27.setFont(font)
+        self.label_27.setStyleSheet("QLabel {\n"
+"    border-style: square;\n"
+"}")
+        self.label_27.setObjectName("label_27")
+        self.label_28 = QtWidgets.QLabel(self.page)
+        self.label_28.setGeometry(QtCore.QRect(420, 470, 131, 21))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_28.setFont(font)
+        self.label_28.setStyleSheet("QLabel {\n"
+"    border-style: square;\n"
+"}")
+        self.label_28.setObjectName("label_28")
+        self.label_23 = QtWidgets.QLabel(self.page)
+        self.label_23.setGeometry(QtCore.QRect(370, 470, 40, 25))
+        self.label_23.setStyleSheet("QLabel {\n"
+"    border: none;\n"
+"}")
+        self.label_23.setText("")
+        self.label_23.setPixmap(QtGui.QPixmap("../src/icon/signal.png"))
+        self.label_23.setScaledContents(True)
+        self.label_23.setObjectName("label_23")
+        self.graphicsView_4 = QtWidgets.QGraphicsView(self.page)
+        self.graphicsView_4.setGeometry(QtCore.QRect(340, 475, 671, 331))
+        self.graphicsView_4.setStyleSheet("QGraphicsView{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:transparent;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: transparent;\n"
+"}")
+        self.graphicsView_4.setObjectName("graphicsView_4")
+        self.graphicsView_4.raise_()
+        self.widget.raise_()
         self.frame_4.raise_()
         self.pushButton_2.raise_()
-        self.widget.raise_()
         self.label_10.raise_()
         self.horizontalSlider_2.raise_()
         self.label_9.raise_()
@@ -441,41 +544,322 @@ class Ui_Form(object):
         self.label_11.raise_()
         self.label_12.raise_()
         self.pushButton_9.raise_()
-        self.frame_3.raise_()
+        self.label_28.raise_()
+        self.label_23.raise_()
         self.stackedWidget.addWidget(self.page)
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
-        self.label_5 = QtWidgets.QLabel(self.page_3)
-        self.label_5.setGeometry(QtCore.QRect(480, 310, 54, 16))
-        self.label_5.setObjectName("label_5")
+        self.pushButton_8 = QtWidgets.QPushButton(self.page_3)
+        self.pushButton_8.setGeometry(QtCore.QRect(990, 414, 31, 24))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.pushButton_8.setFont(font)
+        self.pushButton_8.setStyleSheet("QPushButton {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}")
+        self.pushButton_8.setText("")
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("../src/icon/data.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_8.setIcon(icon4)
+        self.pushButton_8.setIconSize(QtCore.QSize(25, 25))
+        self.pushButton_8.setObjectName("pushButton_8")
+        self.comboBox = QtWidgets.QComboBox(self.page_3)
+        self.comboBox.setGeometry(QtCore.QRect(897, 415, 91, 22))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.comboBox.setFont(font)
+        self.comboBox.setObjectName("comboBox")
+        self.frame_5 = QtWidgets.QFrame(self.page_3)
+        self.frame_5.setGeometry(QtCore.QRect(20, 20, 1011, 391))
+        self.frame_5.setStyleSheet("QFrame{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:#F0F0F0;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: white;\n"
+"}")
+        self.frame_5.setFrameShape(QtWidgets.QFrame.Box)
+        self.frame_5.setObjectName("frame_5")
+        self.graphicsView = QtWidgets.QGraphicsView(self.frame_5)
+        self.graphicsView.setGeometry(QtCore.QRect(5, 5, 1001, 380))
+        self.graphicsView.setStyleSheet("QGraphicsView{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:transparent;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: transparent;\n"
+"}")
+        self.graphicsView.setObjectName("graphicsView")
+        self.frame_6 = QtWidgets.QFrame(self.page_3)
+        self.frame_6.setGeometry(QtCore.QRect(20, 440, 351, 371))
+        self.frame_6.setStyleSheet("QFrame{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:#F0F0F0;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: white;\n"
+"}")
+        self.frame_6.setFrameShape(QtWidgets.QFrame.Box)
+        self.frame_6.setObjectName("frame_6")
+        self.graphicsView_2 = QtWidgets.QGraphicsView(self.frame_6)
+        self.graphicsView_2.setGeometry(QtCore.QRect(5, 5, 341, 361))
+        self.graphicsView_2.setStyleSheet("QGraphicsView{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:transparent;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: transparent;\n"
+"}")
+        self.graphicsView_2.setObjectName("graphicsView_2")
+        self.frame_7 = QtWidgets.QFrame(self.page_3)
+        self.frame_7.setGeometry(QtCore.QRect(400, 440, 631, 371))
+        self.frame_7.setStyleSheet("QFrame{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:#F0F0F0;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: white;\n"
+"}")
+        self.frame_7.setFrameShape(QtWidgets.QFrame.Box)
+        self.frame_7.setObjectName("frame_7")
+        self.graphicsView_3 = QtWidgets.QGraphicsView(self.frame_7)
+        self.graphicsView_3.setGeometry(QtCore.QRect(5, 5, 621, 361))
+        self.graphicsView_3.setStyleSheet("QGraphicsView{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:transparent;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: transparent;\n"
+"}")
+        self.graphicsView_3.setObjectName("graphicsView_3")
+        self.comboBox_2 = QtWidgets.QComboBox(self.page_3)
+        self.comboBox_2.setGeometry(QtCore.QRect(790, 415, 101, 22))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.comboBox_2.setFont(font)
+        self.comboBox_2.setObjectName("comboBox_2")
         self.stackedWidget.addWidget(self.page_3)
         self.page_4 = QtWidgets.QWidget()
         self.page_4.setObjectName("page_4")
-        self.label_6 = QtWidgets.QLabel(self.page_4)
-        self.label_6.setGeometry(QtCore.QRect(250, 350, 54, 16))
-        self.label_6.setObjectName("label_6")
-        self.stackedWidget.addWidget(self.page_4)
-        self.page_5 = QtWidgets.QWidget()
-        self.page_5.setObjectName("page_5")
-        self.label_7 = QtWidgets.QLabel(self.page_5)
-        self.label_7.setGeometry(QtCore.QRect(250, 310, 54, 16))
-        self.label_7.setObjectName("label_7")
-        self.stackedWidget.addWidget(self.page_5)
-        self.page_6 = QtWidgets.QWidget()
-        self.page_6.setObjectName("page_6")
-        self.label_8 = QtWidgets.QLabel(self.page_6)
-        self.label_8.setGeometry(QtCore.QRect(340, 450, 54, 16))
-        self.label_8.setObjectName("label_8")
-        self.stackedWidget.addWidget(self.page_6)
-        self.page_2 = QtWidgets.QWidget()
-        self.page_2.setObjectName("page_2")
-        self.label_4 = QtWidgets.QLabel(self.page_2)
-        self.label_4.setGeometry(QtCore.QRect(230, 390, 54, 16))
+        self.widget_2 = QVideoWidget(self.page_4)
+        self.widget_2.setEnabled(True)
+        self.widget_2.setGeometry(QtCore.QRect(20, 13, 1011, 391))
+        self.widget_2.setAutoFillBackground(False)
+        self.widget_2.setStyleSheet("QWidget {\n"
+"    background-color: black;\n"
+"}")
+        self.widget_2.setObjectName("widget_2")
+        self.horizontalSlider_3 = QtWidgets.QSlider(self.page_4)
+        self.horizontalSlider_3.setGeometry(QtCore.QRect(20, 403, 1011, 18))
+        self.horizontalSlider_3.setStyleSheet("QSlider {\n"
+"    background-color: black;\n"
+"    padding-left: 15px;  /* 左侧端点离左边的距离 */\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QSlider::add-page:horizontal {\n"
+"    background-color: #7A7B79;\n"
+"    height: 5px;\n"
+"    border-radius: 2px;\n"
+"}\n"
+"\n"
+"QSlider::sub-page:horizontal {\n"
+"    background-color: #FF7826;\n"
+"    height: 5px;\n"
+"    border-radius: 2px;\n"
+"}\n"
+"\n"
+"QSlider::groove:horizontal {\n"
+"    background: transparent;\n"
+"    height: 6px;\n"
+"}\n"
+"\n"
+"QSlider::handle:horizontal {\n"
+"    width: 14px;\n"
+"    height: 14px;\n"
+"    margin: -4px 0px -4px 0px;\n"
+"    border-radius: 7px;\n"
+"    background: white;\n"
+"}")
+        self.horizontalSlider_3.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider_3.setObjectName("horizontalSlider_3")
+        self.pushButton_18 = QtWidgets.QPushButton(self.page_4)
+        self.pushButton_18.setGeometry(QtCore.QRect(20, 428, 61, 31))
+        self.pushButton_18.setStyleSheet("QPushButton {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}")
+        self.pushButton_18.setText("")
+        self.pushButton_18.setIcon(icon1)
+        self.pushButton_18.setIconSize(QtCore.QSize(30, 30))
+        self.pushButton_18.setObjectName("pushButton_18")
+        self.label_45 = QtWidgets.QLabel(self.page_4)
+        self.label_45.setGeometry(QtCore.QRect(80, 435, 71, 16))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        self.label_45.setFont(font)
+        self.label_45.setObjectName("label_45")
+        self.label_46 = QtWidgets.QLabel(self.page_4)
+        self.label_46.setGeometry(QtCore.QRect(150, 435, 8, 16))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        self.label_46.setFont(font)
+        self.label_46.setObjectName("label_46")
+        self.label_47 = QtWidgets.QLabel(self.page_4)
+        self.label_47.setGeometry(QtCore.QRect(160, 435, 71, 16))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        self.label_47.setFont(font)
+        self.label_47.setObjectName("label_47")
+        self.pushButton_19 = QtWidgets.QPushButton(self.page_4)
+        self.pushButton_19.setGeometry(QtCore.QRect(990, 432, 31, 21))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(False)
+        self.pushButton_19.setFont(font)
+        self.pushButton_19.setStyleSheet("QPushButton {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}")
+        self.pushButton_19.setText("")
+        self.pushButton_19.setIcon(icon2)
+        self.pushButton_19.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_19.setObjectName("pushButton_19")
+        self.horizontalSlider_7 = QtWidgets.QSlider(self.page_4)
+        self.horizontalSlider_7.setGeometry(QtCore.QRect(830, 433, 111, 18))
+        self.horizontalSlider_7.setStyleSheet("QSlider {\n"
+"    padding-left: 0;  /* 左侧端点离左边的距离 */\n"
+"    padding-right: 0;\n"
+"}\n"
+"\n"
+"QSlider::add-page:horizontal {\n"
+"    background-color: #7A7B79;\n"
+"    height: 5px;\n"
+"    border-radius: 2px;\n"
+"}\n"
+"\n"
+"QSlider::sub-page:horizontal {\n"
+"    background-color: #FF7826;\n"
+"    height: 5px;\n"
+"    border-radius: 2px;\n"
+"}\n"
+"\n"
+"QSlider::groove:horizontal {\n"
+"    background: transparent;\n"
+"    height: 6px;\n"
+"}\n"
+"\n"
+"QSlider::handle:horizontal {\n"
+"    width: 14px;\n"
+"    height: 14px;\n"
+"    margin: -4px 0px -4px 0px;\n"
+"    border-radius: 7px;\n"
+"    background: white;\n"
+"}")
+        self.horizontalSlider_7.setMaximum(100)
+        self.horizontalSlider_7.setTracking(True)
+        self.horizontalSlider_7.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider_7.setObjectName("horizontalSlider_7")
+        self.pushButton_20 = QtWidgets.QPushButton(self.page_4)
+        self.pushButton_20.setGeometry(QtCore.QRect(950, 430, 31, 25))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(False)
+        self.pushButton_20.setFont(font)
+        self.pushButton_20.setStyleSheet("QPushButton {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}")
+        self.pushButton_20.setText("")
+        self.pushButton_20.setIcon(icon)
+        self.pushButton_20.setIconSize(QtCore.QSize(25, 25))
+        self.pushButton_20.setObjectName("pushButton_20")
+        self.label_48 = QtWidgets.QLabel(self.page_4)
+        self.label_48.setGeometry(QtCore.QRect(790, 427, 30, 30))
+        self.label_48.setStyleSheet("QLabel{\n"
+"\n"
+"background-color:transparent;\n"
+"border-color: transparent;\n"
+"\n"
+"}")
+        self.label_48.setText("")
+        self.label_48.setPixmap(QtGui.QPixmap("../src/icon/volume-on.png"))
+        self.label_48.setScaledContents(True)
+        self.label_48.setObjectName("label_48")
+        self.frame_12 = QtWidgets.QFrame(self.page_4)
+        self.frame_12.setGeometry(QtCore.QRect(20, 470, 351, 331))
+        self.frame_12.setStyleSheet("QFrame{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:#F0F0F0;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: white;\n"
+"\n"
+"}")
+        self.frame_12.setFrameShape(QtWidgets.QFrame.Box)
+        self.frame_12.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_12.setObjectName("frame_12")
+        self.label_4 = QtWidgets.QLabel(self.frame_12)
+        self.label_4.setGeometry(QtCore.QRect(110, 100, 121, 121))
+        self.label_4.setStyleSheet("QFrame{\n"
+"\n"
+"border-radius:0px; \n"
+"background-color:transparent;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: transparent;\n"
+"\n"
+"}")
+        self.label_4.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.label_4.setText("")
+        self.label_4.setPixmap(QtGui.QPixmap("../src/icon/camera.png"))
+        self.label_4.setScaledContents(True)
         self.label_4.setObjectName("label_4")
-        self.stackedWidget.addWidget(self.page_2)
+        self.label_49 = ClickableLabel(self.frame_12)
+        self.label_49.setGeometry(QtCore.QRect(10, 10, 30, 30))
+        self.label_49.setStyleSheet("QLabel{\n"
+"\n"
+"background-color:transparent;\n"
+"border-color: transparent;\n"
+"\n"
+"}")
+        self.label_49.setText("")
+        self.label_49.setTextFormat(QtCore.Qt.MarkdownText)
+        self.label_49.setPixmap(QtGui.QPixmap("../src/icon/camera-open.png"))
+        self.label_49.setScaledContents(True)
+        self.label_49.setObjectName("label_49")
+        self.graphicsView_9 = QtWidgets.QGraphicsView(self.page_4)
+        self.graphicsView_9.setGeometry(QtCore.QRect(390, 470, 641, 331))
+        self.graphicsView_9.setStyleSheet("QGraphicsView{\n"
+"\n"
+"border-radius:10px; \n"
+"background-color:#F0F0F0;\n"
+"border-width: 0.5px;\n"
+"    border-style: solid;\n"
+"    border-color: white;\n"
+"}")
+        self.graphicsView_9.setObjectName("graphicsView_9")
+        self.stackedWidget.addWidget(self.page_4)
 
         self.retranslateUi(Form)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -485,11 +869,11 @@ class Ui_Form(object):
         self.pushButton_4.setText(_translate("Form", "数据分析"))
         self.pushButton_5.setText(_translate("Form", "在线检测"))
         self.label_2.setText(_translate("Form", "脑电采集平台"))
-        self.pushButton_2.setText(_translate("Form", "选择视频"))
+        self.label_25.setText(_translate("Form", "武汉理工大学"))
+        self.label_26.setText(_translate("Form", "智能机器人课题组"))
         self.label_10.setText(_translate("Form", "00:00:00"))
         self.label_11.setText(_translate("Form", "00:00:00"))
         self.label_12.setText(_translate("Form", "/"))
-        self.pushButton_9.setText(_translate("Form", "全屏播放"))
         self.radioButton.setText(_translate("Form", "男"))
         self.radioButton_2.setText(_translate("Form", "女"))
         self.checkBox.setText(_translate("Form", ".mat"))
@@ -497,15 +881,16 @@ class Ui_Form(object):
         self.pushButton_6.setText(_translate("Form", "确定"))
         self.pushButton_7.setText(_translate("Form", "重置"))
         self.label_13.setText(_translate("Form", "实验描述"))
-        self.label_14.setText(_translate("Form", "受试者编号"))
-        self.label_15.setText(_translate("Form", "性别"))
-        self.label_16.setText(_translate("Form", "年龄"))
+        self.label_14.setText(_translate("Form", "受试者名"))
+        self.label_15.setText(_translate("Form", "性 别"))
+        self.label_16.setText(_translate("Form", "年 龄"))
         self.label_18.setText(_translate("Form", "保存格式"))
         self.label_19.setText(_translate("Form", "实验时间"))
         self.label_17.setText(_translate("Form", "保存路径"))
-        self.label_5.setText(_translate("Form", "第三页"))
-        self.label_6.setText(_translate("Form", "第四页"))
-        self.label_7.setText(_translate("Form", "第五页"))
-        self.label_8.setText(_translate("Form", "第六页"))
-        self.label_4.setText(_translate("Form", "第二页"))
+        self.label_27.setText(_translate("Form", "实验设置"))
+        self.label_28.setText(_translate("Form", "实时波形展示"))
+        self.label_45.setText(_translate("Form", "00:00:00"))
+        self.label_46.setText(_translate("Form", "/"))
+        self.label_47.setText(_translate("Form", "00:00:00"))
 from PyQt5.QtMultimediaWidgets import QVideoWidget
+from utils.utils import ClickableLabel
