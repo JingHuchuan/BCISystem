@@ -4,6 +4,8 @@ import os.path
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
+
+from controller.selfAssessmentControl import SelfAssessment
 from form.mainWindow_ui import Ui_Form
 from PyQt5.QtCore import Qt, QDateTime, QTimer
 from PyQt5.QtGui import QIcon, QPixmap, QImage
@@ -13,11 +15,11 @@ from utils.utils import loadRawData, MyFigure, handleVideoPlayerEvents
 from PyQt5.QtWidgets import QFileDialog, QWidget, QGraphicsScene, QMessageBox
 
 
-# TODO 需要解决的bug，选择了数据集之后，再选择数据集的话，trial也会改，目前还没解决
-
 class MainWindow(QWidget, Ui_Form):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.clip = 1  # 保存数据的片段
+        self.selfAssessmentDialog = None
         self.fatherPath = None
         self.expTime = None
         self.npyFile = True
@@ -210,6 +212,7 @@ class MainWindow(QWidget, Ui_Form):
                 self.player.setMedia(QMediaContent(selected_video))
                 self.player.play()
                 self.getSignal()
+                self.setTimer()  # 设置定时器
 
         if button == self.pushButton_20:
             selected_video = QFileDialog.getOpenFileUrl(filter="Video files (*.mp4 *.avi *.mkv)")[0]
@@ -225,14 +228,6 @@ class MainWindow(QWidget, Ui_Form):
 
         button = self.sender()
 
-        if button == self.pushButton_3:
-            if self.player.state() == 1:
-                self.pushButton_3.setIcon(QIcon('src/icon/play.png'))
-                self.player.pause()
-            else:
-                self.pushButton_3.setIcon(QIcon('src/icon/pause.png'))
-                self.player.play()
-
         if button == self.pushButton_18:
             if self.player_2.state() == 1:
                 self.pushButton_18.setIcon(QIcon('src/icon/play.png'))
@@ -240,6 +235,14 @@ class MainWindow(QWidget, Ui_Form):
             else:
                 self.pushButton_18.setIcon(QIcon('src/icon/pause.png'))
                 self.player_2.play()
+
+        else:
+            if self.player.state() == 1:
+                self.pushButton_3.setIcon(QIcon('src/icon/play.png'))
+                self.player.pause()
+            else:
+                self.pushButton_3.setIcon(QIcon('src/icon/pause.png'))
+                self.player.play()
 
     def setVolumeFunc(self):
         """
@@ -341,11 +344,16 @@ class MainWindow(QWidget, Ui_Form):
         """
         button = self.sender()
 
-        if button == self.pushButton_9:
-            self.widget.setFullScreen(True)
-
         if button == self.pushButton_19:
             self.widget_2.setFullScreen(True)
+        else:
+            # 包括点击全屏和定时器全屏
+            self.widget.setFullScreen(True)
+
+    def closeFullScreen(self):
+        if self.widget.isFullScreen():
+            self.widget.setFullScreen(False)
+            self.widget.setGeometry(20, 13, 1011, 391)
 
     def selectPath(self):
         """
@@ -384,12 +392,10 @@ class MainWindow(QWidget, Ui_Form):
         self.fatherPath = self.lineEdit_3.text()
         if self.matFile:
             self.matFileName = os.path.join(self.fatherPath,
-                                            f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}"
-                                            f".mat")
+                                            f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}")
         if self.npyFile:
             self.npyFileName = os.path.join(self.fatherPath,
-                                            f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}"
-                                            f".npy")
+                                            f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}")
 
         if self.matFileName:
             self.matFileName = os.path.normpath(self.matFileName)
@@ -435,7 +441,7 @@ class MainWindow(QWidget, Ui_Form):
         :return:
         """
         rawEEG, ica = loadRawData(self.filePath, self.datasetType, self.trial)
-        chTimeFig = rawEEG.plot(duration=4, n_channels=8, clipping=None, scalings='auto', show=False)
+        chTimeFig = rawEEG.plot(duration=4, n_channels=8, clipping=None, scalings=100, show=False)
         self.putFig(MyFigure(chTimeFig), self.graphicsView)
         plt.close()
         icaFig = ica.plot_components(nrows=2, ncols=2, show=False)
@@ -453,13 +459,12 @@ class MainWindow(QWidget, Ui_Form):
         sender = self.sender()
 
         if sender == self.comboBox:
-            print("there")
             self.selectFile()
             currentDateset = self.comboBox.currentText()  # 当前的选中的数据集类型
             if currentDateset != self.datasetType:  # 代表我什么都没选，那么当前显示的应该还是之前的数据集
-                self.comboBox.blockSignals(True)    # 阻塞comboBox的currentTextChanged信号，不然会出两次弹窗
+                self.comboBox.blockSignals(True)  # 阻塞comboBox的currentTextChanged信号，不然会出两次弹窗
                 self.comboBox.setCurrentText(self.datasetType)
-                self.comboBox.blockSignals(False)   # 取消阻塞
+                self.comboBox.blockSignals(False)  # 取消阻塞
         else:
             self.datasetType = self.comboBox.currentText()
         if self.datasetType == 'DEAP':
@@ -525,11 +530,10 @@ class MainWindow(QWidget, Ui_Form):
         eeg_ch = ['Fp1', 'AF3', 'F3', 'F7', 'FC5', 'FC1', 'C3', 'T7', 'CP5', 'CP1', 'P3', 'P7', 'PO3', 'O1', 'Oz', 'Pz',
                   'Fp2', 'AF4', 'Fz', 'F4', 'F8', 'FC6', 'FC2', 'Cz', 'C4', 'T8', 'CP6', 'CP2', 'P4', 'P8', 'PO4', 'O2']
         eeg_fs = 256
-
         self.info_eeg = mne.create_info(eeg_ch, eeg_fs, ch_types='eeg')
-        self.my_thread = GetRealTimeData()
 
         # 实时展示数据
+        self.my_thread = GetRealTimeData()
         self.my_thread.getSecondDataSignal.connect(self.getSecondData)
         self.my_thread.expFinished.connect(self.saveExpData)
         self.my_thread.start()
@@ -548,7 +552,7 @@ class MainWindow(QWidget, Ui_Form):
         self.putFig(MyFigure(chTimeFig), self.graphicsView_4)
         plt.close()
 
-        # # 测试代码
+        # 测试代码
         # dataPerSecond = data[0]
         # dataPerSecond = mne.io.RawArray(dataPerSecond, self.info_eeg)
         # chTimeFig = dataPerSecond.plot(duration=1, n_channels=6, clipping=None, scalings='auto', show=False)
@@ -557,14 +561,31 @@ class MainWindow(QWidget, Ui_Form):
 
     def saveExpData(self, data):
         """
-        保存实验的数据
+        保存实验的数据，根据每一个trial保存数据
         :return:
         """
+        matFileName = self.matFileName
+        npyFileName = self.npyFileName
+
+        if matFileName:
+            matFileName = matFileName + '-片段{}'.format(self.clip)
+        if npyFileName:
+            npyFileName = npyFileName + '-片段{}'.format(self.clip)
+
         data = np.array(data)
+
+        # if data.shape[0] > 100:  # 片段肯定大于100秒，只有这种才保存，其他的都不是片段数据
+        #     if self.matFile:
+        #         scipy.io.savemat(matFileName, {'data': data})
+        #     if self.npyFile:
+        #         np.save(npyFileName, data)
+        #     self.clip = self.clip + 1
+
         if self.matFile:
-            scipy.io.savemat(self.matFileName, {'data': data})
+            scipy.io.savemat(matFileName, {'data': data})
         if self.npyFile:
-            np.save(self.npyFileName, data)
+            np.save(npyFileName, data)
+        self.clip = self.clip + 1
 
     def controlCamera(self):
         """
@@ -574,7 +595,7 @@ class MainWindow(QWidget, Ui_Form):
         if not self.timerCamera.isActive():
             flag = self.cam.open(0)
             if not flag:
-                msg = QMessageBox.warning(self, 'warning', "请检查相机于电脑是否连接正确", buttons=QMessageBox.Ok)
+                QMessageBox.warning(self, 'warning', "请检查相机于电脑是否连接正确", buttons=QMessageBox.Ok)
             else:
                 self.timerCamera.start(30)  # 定时器开始计时30ms，结果是每过30ms从摄像头中取一帧显示
                 self.label_49.setPixmap(QPixmap('src/icon/camera-close.png'))
@@ -598,3 +619,41 @@ class MainWindow(QWidget, Ui_Form):
 
         self.label_4.setGeometry(5, 50, 340, 255)
         self.label_4.setPixmap(QPixmap.fromImage(showImage))
+
+    def selfAssessment(self):
+        """
+        自我评估对话框界面
+        :return:
+        """
+        self.selfAssessmentDialog = SelfAssessment()
+        self.selfAssessmentDialog.setModal(True)
+        self.selfAssessmentDialog.label.setPixmap(QPixmap('src/image/valence.png'))
+        self.selfAssessmentDialog.label_2.setPixmap(QPixmap('src/image/arousal.png'))
+        self.selfAssessmentDialog.setWindowIcon(QIcon('src/icon/assessment.png'))
+        self.selfAssessmentDialog.setWindowTitle('SelfAssessment')
+        self.selfAssessmentDialog.setWindowFlags(Qt.Window | Qt.WindowTitleHint)  # 隐藏关闭按钮
+        self.selfAssessmentDialog.setFixedSize(self.selfAssessmentDialog.size())
+        self.selfAssessmentDialog.show()
+
+        # 使用15秒评估完之后就关闭窗口，保存结果，恢复视频
+        QTimer.singleShot(15000, self.selfAssessmentDialog.close)
+        QTimer.singleShot(15000, self.playPause)
+
+    def setTimer(self):
+        """
+        设置定时器，包括自动全屏，自动保存数据，弹出自我量表评估界面
+        :return:
+        """
+        QTimer.singleShot(3000, self.fullScreen)  # 3s后自动全屏
+
+        QTimer.singleShot(18000, self.my_thread.clearSamples)  # 18秒的时候开始记录第一组的数据，清空之前的数据
+        QTimer.singleShot(60000, self.my_thread.saveSamples)  # 4分59秒的时候第一个视频采集完毕
+
+        QTimer.singleShot(297000, self.selfAssessment)  # 5分2秒后第一个视频结束，保存数据，开始评估，评估时间为15秒，视频暂停
+        QTimer.singleShot(297000, self.playPause)
+
+        QTimer.singleShot(330000, self.my_thread.clearSamples)  # 5分30秒的时候开始记录第二组的数据，清空之前的数据
+        QTimer.singleShot(583000, self.my_thread.saveSamples)  # 9分43的时候第二个视频采集完毕
+
+        QTimer.singleShot(581000, self.selfAssessment)  # 5分2秒后第一个视频结束，保存数据，开始评估，评估时间为15秒，视频暂停
+        QTimer.singleShot(581000, self.playPause)

@@ -1,6 +1,7 @@
+import time
 import pygds as g
 import numpy as np
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QTimer
 
 
 class GetRealTimeData(QThread):
@@ -12,6 +13,7 @@ class GetRealTimeData(QThread):
 
     def __init__(self, ):
         super().__init__()
+        self.samples = None
 
         self.d = g.GDS()
         self.reference = 32
@@ -25,6 +27,8 @@ class GetRealTimeData(QThread):
         # 配置默认参数
         self.configure()
 
+        # self.reference = 8
+
         # 通过设置对应的滤波器获取选定采样率所有适合的带通滤波器和陷波滤波器index来实现滤波
         N = [x for x in self.d.GetNotchFilters()[0] if x['SamplingRate'] == self.d.SamplingRate]
         BP = [x for x in self.d.GetBandpassFilters()[0] if x['SamplingRate'] == self.d.SamplingRate]
@@ -37,7 +41,7 @@ class GetRealTimeData(QThread):
                 ch.NotchFilterIndex = N[0]['NotchFilterIndex']  # 50Hz陷波滤波器
             if BP:
                 ch.BandpassFilterIndex = BP[14]['BandpassFilterIndex']  # [0.5-60]带通滤波
-            # if i == reference - 1:
+            # if i == self.reference - 1:
             #     break
 
         # 将设置好的参数应用到设备上
@@ -51,13 +55,13 @@ class GetRealTimeData(QThread):
         实现对选中的电极通道进行设置初始化（采样率、带通滤波器参数、陷波滤波器参数和参考电极）
         :return:
         """
-        self.d.InternalSignalGenerator.Enabled = False      # 不使用内置信号发生器
+        self.d.InternalSignalGenerator.Enabled = False  # 不使用内置信号发生器
         self.d.InternalSignalGenerator.Frequency = 10
         self.d.NumberOfScans_calc()
         self.d.Counter = 0
         self.d.Trigger = 0
         for ch in self.d.Channels:
-            ch.Acquire = 0    # 初始化为不获得数据
+            ch.Acquire = 0  # 初始化为不获得数据
             ch.BandpassFilterIndex = -1
             ch.NotchFilterIndex = -1
             ch.BipolarChannel = 0  # 0 => to GND
@@ -73,39 +77,42 @@ class GetRealTimeData(QThread):
             if i < self.reference:
                 print("channel_{}'s impedance is {}".format(i + 1, imps[0][i]))
 
+    def clearSamples(self):
+        """
+        清空samples，开始采集数据
+        :return:
+        """
+        self.samples = []
+
+    def saveSamples(self):
+        """
+        一个片段结束，发送samples，准备采集数据
+        :return:
+        """
+        self.expFinished.emit(self.samples)
+        self.samples = []
+
     def run(self):
-        samples = []
-        while len(samples) < 240:
+        self.samples = []
+        while True:
             container = list()
             data = self.d.GetData(self.d.SamplingRate)  # 一个data获取的就是1s的数据
-            samples.append(data)
+            self.samples.append(data)
             container.append(data)
             self.getSecondDataSignal.emit(container)
 
-        self.expFinished.emit(samples)
+        # self.expFinished.emit(samples)
         del data
 
         self.d.Close()
         del self.d
 
-        # 测试数据
-        # samples = []
-        # while len(samples) < 30:
-        #     container = []
-        #     self.msleep(1000)
-        #     data = np.random.rand(32, 256)
-        #     samples.append(data)
-        #     container.append(data)
-        #     self.getSecondDataSignal.emit(container)
-        #
-        # self.expFinished.emit(samples)
-
-
-
-
-
-
-
-
-
-
+    # def run(self):
+    #     self.samples = []
+    #     while True:
+    #         container = []
+    #         data = np.random.rand(32, 256)
+    #         self.samples.append(data)
+    #         container.append(data)
+    #         self.getSecondDataSignal.emit(container)
+    #         time.sleep(1)
