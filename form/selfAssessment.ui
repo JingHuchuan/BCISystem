@@ -270,7 +270,7 @@
     <string>激动</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>110</x>
@@ -285,6 +285,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -292,6 +295,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -299,6 +305,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -306,6 +315,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -313,6 +325,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -320,6 +335,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -327,6 +345,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -334,6 +355,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
     <item>
@@ -341,6 +365,9 @@
       <property name="text">
        <string/>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
      </widget>
     </item>
    </layout>
@@ -348,4 +375,7 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

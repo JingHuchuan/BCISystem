@@ -2,15 +2,17 @@ import mne
 import scipy
 import os.path
 import cv2 as cv
+import pygds as g
 import numpy as np
 import matplotlib.pyplot as plt
 
-from controller.selfAssessmentControl import SelfAssessment
+
 from form.mainWindow_ui import Ui_Form
 from PyQt5.QtCore import Qt, QDateTime, QTimer
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from controller.getRealTimeData import GetRealTimeData
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from controller.selfAssessmentControl import SelfAssessment
 from utils.utils import loadRawData, MyFigure, handleVideoPlayerEvents
 from PyQt5.QtWidgets import QFileDialog, QWidget, QGraphicsScene, QMessageBox
 
@@ -18,6 +20,10 @@ from PyQt5.QtWidgets import QFileDialog, QWidget, QGraphicsScene, QMessageBox
 class MainWindow(QWidget, Ui_Form):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.segment = 0  # 上半段实验还是下半段实验，0代表上半段，1代表下半段
+        self.saveFilePath = None
+        self.segmentPoint = None
+        self.getPerSecondDataTimer = None
         self.clip = 1  # 保存数据的片段
         self.selfAssessmentDialog = None
         self.fatherPath = None
@@ -27,8 +33,6 @@ class MainWindow(QWidget, Ui_Form):
         self.sex = '男'
         self.settingDescription = '测试实验'
         self.subjectName = '测试受试者'
-        self.npyFileName = None
-        self.matFileName = None
         self.info_eeg = None
         self.my_thread = None
         self.trial = 1
@@ -112,6 +116,7 @@ class MainWindow(QWidget, Ui_Form):
         self.radioButton.setChecked(True)
         self.lineEdit.setPlaceholderText("实验描述")
         self.lineEdit_2.setPlaceholderText("姓名缩写")
+        self.radioButton_3.setChecked(True)
 
         # 摄像头相关
         self.cam = cv.VideoCapture()
@@ -123,6 +128,17 @@ class MainWindow(QWidget, Ui_Form):
         self.signalBindSlot()
         self.selectDateset()  # 开始调用一次选择数据集，默认选择DEAP数据集
         self.confirmSetting()  # 开始就调用一次确认选择，文件将按照默认进行保存
+
+        # 打开脑电设备并加载设置
+        # self.equipment = Equipment()
+        self.eeg_fs = 256
+        self.eeg_ch = ['Fp1', 'AF3', 'F3', 'F7', 'FC5', 'FC1', 'C3', 'T7']
+        self.info_eeg = mne.create_info(self.eeg_ch, self.eeg_fs, ch_types='eeg')
+
+        # 实时显示波形界面初始化
+        self.initialPlot()
+
+        # self.selfAssessment()
 
     def signalBindSlot(self):
         """
@@ -390,20 +406,26 @@ class MainWindow(QWidget, Ui_Form):
             self.expTime = datetimeObj.toString('yyyy_MM_dd_HH_mm')
 
         self.fatherPath = self.lineEdit_3.text()
-        if self.matFile:
-            self.matFileName = os.path.join(self.fatherPath,
-                                            f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}")
-        if self.npyFile:
-            self.npyFileName = os.path.join(self.fatherPath,
-                                            f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}")
 
-        if self.matFileName:
-            self.matFileName = os.path.normpath(self.matFileName)
-        if self.npyFileName:
-            self.npyFileName = os.path.normpath(self.npyFileName)
+        self.saveFilePath = os.path.join(self.fatherPath,
+                                         f"{self.settingDescription}-{self.subjectName}-{self.sex}-{self.expTime}")
+        self.saveFilePath = os.path.normpath(self.saveFilePath)
 
         if button == self.pushButton_6:
             self.pushButton_6.setIcon(QIcon('src/icon/confirm.png'))
+
+        # 上半段和下半段开始的视频的段数不一样
+        if self.radioButton_3.isChecked():
+            self.segment = 0
+            self.clip = 1
+            # 读取数据切分点
+            self.segmentPoint = [int(line.strip()) for line in open('./file/segmentPointFirstExperiment.txt', "r") if
+                                 line.strip()]
+        if self.radioButton_4.isChecked():
+            self.segment = 1
+            self.clip = 9
+            self.segmentPoint = [int(line.strip()) for line in open('./file/segmentPointSecondExperiment.txt', "r") if
+                                 line.strip()]
 
     def resetSetting(self):
         """
@@ -416,6 +438,7 @@ class MainWindow(QWidget, Ui_Form):
         self.radioButton.setChecked(True)
         self.checkBox.setChecked(False)
         self.checkBox_2.setChecked(False)
+        self.radioButton_3.setChecked(True)
         self.lineEdit.setText('')
         self.lineEdit_2.setText('')
         self.lineEdit_3.setText('')
@@ -441,7 +464,7 @@ class MainWindow(QWidget, Ui_Form):
         :return:
         """
         rawEEG, ica = loadRawData(self.filePath, self.datasetType, self.trial)
-        chTimeFig = rawEEG.plot(duration=4, n_channels=8, clipping=None, scalings=100, show=False)
+        chTimeFig = rawEEG.plot(duration=4, n_channels=8, clipping=None, scalings='auto', show=False)
         self.putFig(MyFigure(chTimeFig), self.graphicsView)
         plt.close()
         icaFig = ica.plot_components(nrows=2, ncols=2, show=False)
@@ -523,64 +546,46 @@ class MainWindow(QWidget, Ui_Form):
         多线程实时获取脑电设备的数据
         :return:
         """
-        # self.label_23.hide()
-        # self.label_28.hide()
-
-        # 　TODO 这里需要换成实际的通道
-        eeg_ch = ['Fp1', 'AF3', 'F3', 'F7', 'FC5', 'FC1', 'C3', 'T7', 'CP5', 'CP1', 'P3', 'P7', 'PO3', 'O1', 'Oz', 'Pz',
-                  'Fp2', 'AF4', 'Fz', 'F4', 'F8', 'FC6', 'FC2', 'Cz', 'C4', 'T8', 'CP6', 'CP2', 'P4', 'P8', 'PO4', 'O2']
-        eeg_fs = 256
-        self.info_eeg = mne.create_info(eeg_ch, eeg_fs, ch_types='eeg')
-
+        # TODO 这里需要换成实际的通道
         # 实时展示数据
+        # self.my_thread = GetRealTimeData(self.equipment.d)
         self.my_thread = GetRealTimeData()
-        self.my_thread.getSecondDataSignal.connect(self.getSecondData)
-        self.my_thread.expFinished.connect(self.saveExpData)
+        self.getPerSecondDataTimer = QTimer()
+        self.getPerSecondDataTimer.timeout.connect(self.my_thread.emitPerSecond)  # 每一秒获得一次数据
+        self.getPerSecondDataTimer.start(1000)
+        self.my_thread.getSecondDataSignal.connect(self.plotSecondData)
+        self.my_thread.expFinished.connect(self.saveExpData)  # 保存数据
         self.my_thread.start()
 
-    def getSecondData(self, data):
+    def plotSecondData(self, data):
         """
         得到每一秒的数据并绘制
         :param data: 每一秒的数据
         :return:
         """
-        dataPerSecond = data[0]  # emit的数据从list中拿出来
-        dataPerSecond = dataPerSecond.T  # data * ch -> ch * data
+        if len(data) > 0:
+            data = np.array(data)
+            dataPerSecond = data[-1]
+            dataPerSecond = dataPerSecond.T  # data * ch -> ch * data
 
-        dataPerSecond = mne.io.RawArray(dataPerSecond, self.info_eeg)
-        chTimeFig = dataPerSecond.plot(duration=1, n_channels=6, clipping=None, scalings='auto', show=False)
-        self.putFig(MyFigure(chTimeFig), self.graphicsView_4)
-        plt.close()
-
-        # 测试代码
-        # dataPerSecond = data[0]
-        # dataPerSecond = mne.io.RawArray(dataPerSecond, self.info_eeg)
-        # chTimeFig = dataPerSecond.plot(duration=1, n_channels=6, clipping=None, scalings='auto', show=False)
-        # self.putFig(MyFigure(chTimeFig), self.graphicsView_4)
-        # plt.close()
+            dataPerSecond = mne.io.RawArray(dataPerSecond, self.info_eeg)
+            chTimeFig = dataPerSecond.plot(duration=1, n_channels=6, clipping=None, scalings=2, show=False)
+            self.putFig(MyFigure(chTimeFig), self.graphicsView_4)
+            plt.close()
 
     def saveExpData(self, data):
         """
         保存实验的数据，根据每一个trial保存数据
         :return:
         """
-        matFileName = self.matFileName
-        npyFileName = self.npyFileName
-
-        if matFileName:
-            matFileName = matFileName + '-片段{}'.format(self.clip)
-        if npyFileName:
-            npyFileName = npyFileName + '-片段{}'.format(self.clip)
+        saveFilePath = self.saveFilePath
+        matFileName, npyFileName = '', ''
+        if self.matFile:
+            matFileName = saveFilePath + '-片段{}'.format(self.clip)
+        if self.npyFile:
+            npyFileName = saveFilePath + '-片段{}'.format(self.clip)
 
         data = np.array(data)
-
-        # if data.shape[0] > 100:  # 片段肯定大于100秒，只有这种才保存，其他的都不是片段数据
-        #     if self.matFile:
-        #         scipy.io.savemat(matFileName, {'data': data})
-        #     if self.npyFile:
-        #         np.save(npyFileName, data)
-        #     self.clip = self.clip + 1
-
         if self.matFile:
             scipy.io.savemat(matFileName, {'data': data})
         if self.npyFile:
@@ -637,23 +642,166 @@ class MainWindow(QWidget, Ui_Form):
 
         # 使用15秒评估完之后就关闭窗口，保存结果，恢复视频
         QTimer.singleShot(15000, self.selfAssessmentDialog.close)
+        QTimer.singleShot(15000, self.saveAssessmentResult)
         QTimer.singleShot(15000, self.playPause)
+
+    def saveAssessmentResult(self):
+        """
+        保存自我评估的结果
+        :return:
+        """
+        assessment_dict = {
+            self.selfAssessmentDialog.radioButton: (1, None),
+            self.selfAssessmentDialog.radioButton_2: (2, None),
+            self.selfAssessmentDialog.radioButton_3: (3, None),
+            self.selfAssessmentDialog.radioButton_4: (4, None),
+            self.selfAssessmentDialog.radioButton_5: (5, None),
+            self.selfAssessmentDialog.radioButton_6: (6, None),
+            self.selfAssessmentDialog.radioButton_7: (7, None),
+            self.selfAssessmentDialog.radioButton_8: (8, None),
+            self.selfAssessmentDialog.radioButton_9: (9, None),
+            self.selfAssessmentDialog.radioButton_19: (None, 1),
+            self.selfAssessmentDialog.radioButton_20: (None, 2),
+            self.selfAssessmentDialog.radioButton_21: (None, 3),
+            self.selfAssessmentDialog.radioButton_22: (None, 4),
+            self.selfAssessmentDialog.radioButton_23: (None, 5),
+            self.selfAssessmentDialog.radioButton_24: (None, 6),
+            self.selfAssessmentDialog.radioButton_25: (None, 7),
+            self.selfAssessmentDialog.radioButton_26: (None, 8),
+            self.selfAssessmentDialog.radioButton_27: (None, 9)
+        }
+
+        valence, arousal = -1, -1
+
+        for radioButton, value in assessment_dict.items():
+            if radioButton.isChecked():
+                if value[1] is None:
+                    valence = value[0]
+                if value[0] is None:
+                    arousal = value[1]
+
+        saveFileName = self.fatherPath + 'assessment-片段{}.txt'.format(self.clip - 1)
+        with open(saveFileName, 'w') as file:
+            file.write(f'valence: {valence}\n')
+            file.write(f'arousal: {arousal}\n')
 
     def setTimer(self):
         """
         设置定时器，包括自动全屏，自动保存数据，弹出自我量表评估界面
+        需要根据上半段还是下半段来设置定时器
         :return:
         """
-        QTimer.singleShot(3000, self.fullScreen)  # 3s后自动全屏
+        # QTimer.singleShot(self.segmentPoint[0], self.fullScreen)  # 10s后自动全屏
+        QTimer.singleShot(self.segmentPoint[1], self.my_thread.clearSamples)  # 18s的时候开始采第一个数据
+        QTimer.singleShot(self.segmentPoint[2], self.my_thread.saveSamples)  # 4分59秒的时候第一个视频采集完毕
+        QTimer.singleShot(self.segmentPoint[3], self.selfAssessment)  # 5分2秒后第一个视频结束，保存数据，开始评估，评估时间为15秒，视频暂停
+        QTimer.singleShot(self.segmentPoint[3], self.playPause)
+        QTimer.singleShot(self.segmentPoint[4], self.my_thread.clearSamples)
+        QTimer.singleShot(self.segmentPoint[5], self.my_thread.saveSamples)  # 9分43的时候第二个视频采集完毕
+        QTimer.singleShot(self.segmentPoint[6], self.selfAssessment)  # 9分46秒后第一个视频结束，保存数据，开始评估，评估时间为15秒，视频暂停
+        QTimer.singleShot(self.segmentPoint[6], self.playPause)
 
-        QTimer.singleShot(18000, self.my_thread.clearSamples)  # 18秒的时候开始记录第一组的数据，清空之前的数据
-        QTimer.singleShot(60000, self.my_thread.saveSamples)  # 4分59秒的时候第一个视频采集完毕
+        # 下面的就是以此类推
+        QTimer.singleShot(self.segmentPoint[7], self.my_thread.clearSamples)
+        QTimer.singleShot(self.segmentPoint[8], self.my_thread.saveSamples)
+        QTimer.singleShot(self.segmentPoint[9], self.selfAssessment)
+        QTimer.singleShot(self.segmentPoint[9], self.playPause)
+        QTimer.singleShot(self.segmentPoint[10], self.my_thread.clearSamples)
+        QTimer.singleShot(self.segmentPoint[11], self.my_thread.saveSamples)
+        QTimer.singleShot(self.segmentPoint[12], self.selfAssessment)
+        QTimer.singleShot(self.segmentPoint[12], self.playPause)
+        QTimer.singleShot(self.segmentPoint[13], self.my_thread.clearSamples)
+        QTimer.singleShot(self.segmentPoint[14], self.my_thread.saveSamples)
+        QTimer.singleShot(self.segmentPoint[15], self.selfAssessment)
+        QTimer.singleShot(self.segmentPoint[15], self.playPause)
+        QTimer.singleShot(self.segmentPoint[16], self.my_thread.clearSamples)
+        QTimer.singleShot(self.segmentPoint[17], self.my_thread.saveSamples)
+        QTimer.singleShot(self.segmentPoint[18], self.selfAssessment)
+        QTimer.singleShot(self.segmentPoint[18], self.playPause)
+        QTimer.singleShot(self.segmentPoint[19], self.my_thread.clearSamples)
+        QTimer.singleShot(self.segmentPoint[20], self.my_thread.saveSamples)
+        QTimer.singleShot(self.segmentPoint[21], self.selfAssessment)
+        QTimer.singleShot(self.segmentPoint[21], self.playPause)
 
-        QTimer.singleShot(297000, self.selfAssessment)  # 5分2秒后第一个视频结束，保存数据，开始评估，评估时间为15秒，视频暂停
-        QTimer.singleShot(297000, self.playPause)
+        if self.segment == 0:
+            # 上半段的实验多一个视频
+            QTimer.singleShot(self.segmentPoint[22], self.my_thread.clearSamples)
+            QTimer.singleShot(self.segmentPoint[23], self.my_thread.saveSamples)
+            QTimer.singleShot(self.segmentPoint[24], self.selfAssessment)
+            QTimer.singleShot(self.segmentPoint[24], self.playPause)
 
-        QTimer.singleShot(330000, self.my_thread.clearSamples)  # 5分30秒的时候开始记录第二组的数据，清空之前的数据
-        QTimer.singleShot(583000, self.my_thread.saveSamples)  # 9分43的时候第二个视频采集完毕
+    def initialPlot(self):
+        """
+        初始化实时显示波形界面
+        :return:
+        """
+        preLoadEEGData = np.zeros((len(self.eeg_ch), self.eeg_fs))
+        preLoadEEGData = mne.io.RawArray(preLoadEEGData, self.info_eeg)
+        chTimeFig = preLoadEEGData.plot(duration=1, n_channels=6, clipping=None, scalings=2, show=False)
+        self.putFig(MyFigure(chTimeFig), self.graphicsView_4)
 
-        QTimer.singleShot(581000, self.selfAssessment)  # 5分2秒后第一个视频结束，保存数据，开始评估，评估时间为15秒，视频暂停
-        QTimer.singleShot(581000, self.playPause)
+
+class Equipment:
+    """
+    脑电设备的初始化以及设置
+    """
+
+    def __init__(self):
+        self.d = g.GDS()
+        self.reference = 8
+
+        # 这里进行读取数据前的设置过程
+        f_s_2 = sorted(self.d.GetSupportedSamplingRates()[0].items())[0]  # 256Hz
+        self.d.SamplingRate, self.d.NumberOfScans = f_s_2
+
+        # 配置默认参数
+        self.configure()
+
+        # 通过设置对应的滤波器获取选定采样率所有适合的带通滤波器和陷波滤波器index来实现滤波
+        N = [x for x in self.d.GetNotchFilters()[0] if x['SamplingRate'] == self.d.SamplingRate]
+        BP = [x for x in self.d.GetBandpassFilters()[0] if x['SamplingRate'] == self.d.SamplingRate]
+
+        # 在自己想要的电极通道数上设置滤波器参数和参考电极参数
+        for i, ch in enumerate(self.d.Channels):
+            ch.Acquire = True  # 设置为可采数据
+            ch.ReferenceChannel = self.reference  # 设置参考电极
+            # if N:
+            #     ch.NotchFilterIndex = N[0]['NotchFilterIndex']  # 50Hz陷波滤波器
+            if BP:
+                ch.BandpassFilterIndex = BP[14]['BandpassFilterIndex']  # [0.5-60]带通滤波
+                # ch.BandpassFilterIndex = BP[15]['BandpassFilterIndex']  # [0.5-100]带通滤波
+            if i == self.reference - 1:
+                break
+
+        # 将设置好的参数应用到设备上
+        self.d.SetConfiguration()
+
+        # 实现获取电极的阻抗值
+        self.inform_impedance()
+
+    def configure(self):
+        """
+        实现对选中的电极通道进行设置初始化（采样率、带通滤波器参数、陷波滤波器参数和参考电极）
+        :return:
+        """
+        self.d.InternalSignalGenerator.Enabled = False  # 不使用内置信号发生器
+        self.d.InternalSignalGenerator.Frequency = 10
+        self.d.NumberOfScans_calc()
+        self.d.Counter = 0
+        self.d.Trigger = 0
+        for ch in self.d.Channels:
+            ch.Acquire = 0  # 初始化为不获得数据
+            ch.BandpassFilterIndex = -1
+            ch.NotchFilterIndex = -1
+            ch.BipolarChannel = 0  # 0 => to GND
+        self.d.HoldEnabled = 0
+
+    def inform_impedance(self):
+        """
+        实时获取选择通道的阻抗值
+        :return:
+        """
+        imps = self.d.GetImpedance([1] * len(self.d.Channels))
+        for i, ch in enumerate(self.d.Channels):
+            if i < self.reference:
+                print("channel_{}'s impedance is {}".format(i + 1, imps[0][i]))
